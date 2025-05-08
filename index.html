@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <title>排班與行事曆</title>
+    <style>
+        body {
+            background-color: #111;
+            color: #eee;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        h1 {
+            color: #0ff;
+            margin-bottom: 10px;
+        }
+        .controls {
+            margin-bottom: 20px;
+        }
+        select, button, input {
+            padding: 5px 10px;
+            margin: 5px;
+            background-color: #222;
+            color: #0ff;
+            border: 1px solid #0ff;
+            border-radius: 4px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            max-width: 900px;
+        }
+        th, td {
+            border: 1px solid #333;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #222;
+            color: #0ff;
+        }
+        .day {
+            font-weight: bold;
+        }
+        .entry {
+            width: 90%;
+            padding: 5px;
+            margin: 3px;
+            background-color: #000;
+            color: #fff;
+            border: 1px solid #444;
+        }
+        .entry:focus {
+            outline: none;
+            border-color: #0ff;
+        }
+        .person-color {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>排班與代辦</h1>
+    <div class="controls">
+        <label>年份：<select id="yearSelect"></select></label>
+        <label>月份：<select id="monthSelect"></select></label>
+        <label>模式：
+            <select id="modeSelect">
+                <option value="todo">代辦事項</option>
+                <option value="schedule">排班模式</option>
+            </select>
+        </label>
+        <label>對象設定：<input id="personName" placeholder="輸入姓名"></label>
+        <button onclick="addPerson()">新增對象</button>
+    </div>
+    <table id="calendar">
+        <thead>
+            <tr>
+                <th>日</th>
+                <th>一</th>
+                <th>二</th>
+                <th>三</th>
+                <th>四</th>
+                <th>五</th>
+                <th>六</th>
+            </tr>
+        </thead>
+        <tbody id="calendarBody"></tbody>
+    </table>
+
+    <script>
+        const yearSelect = document.getElementById("yearSelect");
+        const monthSelect = document.getElementById("monthSelect");
+        const modeSelect = document.getElementById("modeSelect");
+        const personName = document.getElementById("personName");
+        const calendarBody = document.getElementById("calendarBody");
+
+        const persons = [];
+
+        function addPerson() {
+            const name = personName.value;
+            if (name && !persons.includes(name)) {
+                persons.push(name);
+                alert("新增對象：" + name);
+                personName.value = "";
+            }
+        }
+
+        function generateCalendar(year, month) {
+            calendarBody.innerHTML = "";
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            let date = 1;
+
+            for (let i = 0; i < 6; i++) {
+                const row = document.createElement("tr");
+                for (let j = 0; j < 7; j++) {
+                    const cell = document.createElement("td");
+                    if (i === 0 && j < firstDay || date > daysInMonth) {
+                        cell.innerHTML = "";
+                    } else {
+                        cell.innerHTML = `<div class='day'>${date}</div>`;
+                        const input = document.createElement("input");
+                        input.className = "entry";
+                        input.placeholder = "輸入內容...";
+                        cell.appendChild(input);
+                        date++;
+                    }
+                    row.appendChild(cell);
+                }
+                calendarBody.appendChild(row);
+            }
+        }
+
+        const currentYear = new Date().getFullYear();
+        for (let y = currentYear - 2; y <= currentYear + 3; y++) {
+            const option = document.createElement("option");
+            option.value = y;
+            option.textContent = y;
+            if (y === currentYear) option.selected = true;
+            yearSelect.appendChild(option);
+        }
+
+        for (let m = 1; m <= 12; m++) {
+            const option = document.createElement("option");
+            option.value = m - 1;
+            option.textContent = m;
+            if (m === new Date().getMonth() + 1) option.selected = true;
+            monthSelect.appendChild(option);
+        }
+
+        generateCalendar(currentYear, new Date().getMonth());
+
+        yearSelect.addEventListener("change", () => {
+            generateCalendar(+yearSelect.value, +monthSelect.value);
+        });
+        monthSelect.addEventListener("change", () => {
+            generateCalendar(+yearSelect.value, +monthSelect.value);
+        });
+    </script>
+</body>
+</html>

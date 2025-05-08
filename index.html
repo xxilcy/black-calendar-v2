@@ -24,30 +24,34 @@
     <tbody id="cal"></tbody>
   </table>
   <script>
-    const ySel = document.getElementById('y'), mSel = document.getElementById('m'), cal = document.getElementById('cal');
-    // 初始化年 / 月下拉
-    for(let Y=2023;Y<=2030;Y++){ let o=new Option(Y,Y); ySel.add(o); }
-    for(let M=1;M<=12;M++){ let o=new Option(M,M); mSel.add(o); }
-    ySel.value=new Date().getFullYear(); mSel.value=new Date().getMonth()+1;
+    const ySel = document.getElementById('y'),
+          mSel = document.getElementById('m'),
+          cal  = document.getElementById('cal');
+    // 年/月下拉初始化
+    for(let Y=2023; Y<=2030; Y++){ ySel.add(new Option(Y,Y)); }
+    for(let M=1; M<=12; M++){ mSel.add(new Option(M,M)); }
+    ySel.value = new Date().getFullYear();
+    mSel.value = new Date().getMonth()+1;
+    // 畫日曆
     function draw(){
-      const Y=+ySel.value, M=+mSel.value;
-      const first=new Date(Y,M-1,1).getDay(), days=new Date(Y,M,0).getDate();
+      const Y = +ySel.value, M = +mSel.value;
+      const first = new Date(Y,M-1,1).getDay(),
+            days  = new Date(Y,M,0).getDate();
       let html='', d=1;
-      for(let week=0;week<6;week++){
-        html+='<tr>';
-        for(let wd=0;wd<7;wd++){
-          if(week===0 && wd<first || d>days){
-            html+='<td></td>';
+      for(let w=0; w<6; w++){
+        html += '<tr>';
+        for(let wd=0; wd<7; wd++){
+          if((w===0 && wd<first) || d>days){
+            html += '<td></td>';
           } else {
-            html+='<td>'+d+'</td>';
-            d++;
+            html += '<td>'+d+'</td>'; d++;
           }
         }
-        html+='</tr>';
+        html += '</tr>';
       }
-      cal.innerHTML=html;
+      cal.innerHTML = html;
     }
-    ySel.onchange=draw; mSel.onchange=draw;
+    ySel.onchange = mSel.onchange = draw;
     draw();
   </script>
 </body>

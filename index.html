@@ -1,129 +1,54 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-    <meta charset="UTF-8">
-    <title>黑曆 v2</title>
-    <style>
-        body {
-            background-color: #111;
-            color: #eee;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-        }
-        h1 {
-            color: #0ff;
-            margin-bottom: 10px;
-        }
-        .controls {
-            margin-bottom: 20px;
-            display: flex;
-            gap: 10px;
-        }
-        button {
-            padding: 5px 10px;
-            background-color: #222;
-            color: #0ff;
-            border: 1px solid #0ff;
-            border-radius: 4px;
-        }
-        .selected {
-            background-color: #0ff;
-            color: #111;
-        }
-        .calendar {
-            width: 100%;
-            max-width: 900px;
-        }
-        table {
-            border-collapse: collapse;
-            width: 100%;
-        }
-        th, td {
-            border: 1px solid #333;
-            padding: 8px;
-            text-align: center;
-            white-space: pre-wrap;
-        }
-        th {
-            background-color: #222;
-            color: #0ff;
-        }
-        .person-list {
-            margin: 10px 0;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>黑曆 Step1</title>
+  <style>
+    body { background:#111; color:#eee; font-family:sans-serif; text-align:center; }
+    .controls { margin:20px; }
+    select { padding:5px; background:#222; color:#0ff; border:1px solid #0ff; }
+    table { margin:0 auto; border-collapse:collapse; }
+    th,td { width:40px; height:40px; border:1px solid #333; }
+    th { background:#222; color:#0ff; }
+  </style>
 </head>
 <body>
-    <h1>黑曆 v2 - 排班與代辦</h1>
-    <div class="controls">
-        <label>年份：<select id="yearSelect"></select></label>
-        <label>月份：<select id="monthSelect"></select></label>
-        <button onclick="setMode('todo')" id="todoBtn">代辦事項</button>
-        <button onclick="setMode('schedule')" id="scheduleBtn">排班模式</button>
-        <button onclick="managePersons()">班表輸入</button>
-    </div>
-    <div class="calendar">
-        <table>
-            <thead>
-                <tr>
-                    <th>日</th><th>一</th><th>二</th><th>三</th><th>四</th><th>五</th><th>六</th>
-                </tr>
-            </thead>
-            <tbody id="calendarBody"></tbody>
-        </table>
-    </div>
-    <div id="personModal" style="display:none;">
-        <h3>選擇成員</h3>
-        <div id="personList" class="person-list"></div>
-        <button onclick="addPerson()">新增成員</button>
-    </div>
-    <script>
-        let mode = 'todo';
-        let persons = JSON.parse(localStorage.getItem('persons')) || [];
-
-        function setMode(newMode) {
-            mode = newMode;
-            document.getElementById('todoBtn').classList.toggle('selected', mode === 'todo');
-            document.getElementById('scheduleBtn').classList.toggle('selected', mode === 'schedule');
+  <div class="controls">
+    <label>年<select id="y"></select></label>
+    <label>月<select id="m"></select></label>
+  </div>
+  <table>
+    <thead>
+      <tr><th>日</th><th>一</th><th>二</th><th>三</th><th>四</th><th>五</th><th>六</th></tr>
+    </thead>
+    <tbody id="cal"></tbody>
+  </table>
+  <script>
+    const ySel = document.getElementById('y'), mSel = document.getElementById('m'), cal = document.getElementById('cal');
+    // 初始化年 / 月下拉
+    for(let Y=2023;Y<=2030;Y++){ let o=new Option(Y,Y); ySel.add(o); }
+    for(let M=1;M<=12;M++){ let o=new Option(M,M); mSel.add(o); }
+    ySel.value=new Date().getFullYear(); mSel.value=new Date().getMonth()+1;
+    function draw(){
+      const Y=+ySel.value, M=+mSel.value;
+      const first=new Date(Y,M-1,1).getDay(), days=new Date(Y,M,0).getDate();
+      let html='', d=1;
+      for(let week=0;week<6;week++){
+        html+='<tr>';
+        for(let wd=0;wd<7;wd++){
+          if(week===0 && wd<first || d>days){
+            html+='<td></td>';
+          } else {
+            html+='<td>'+d+'</td>';
+            d++;
+          }
         }
-
-        function managePersons() {
-            const modal = document.getElementById('personModal');
-            modal.style.display = 'block';
-            updatePersonList();
-        }
-
-        function updatePersonList() {
-            const list = document.getElementById('personList');
-            list.innerHTML = '';
-            persons.forEach((person, index) => {
-                const button = document.createElement('button');
-                button.textContent = person;
-                button.onclick = () => alert('選擇：' + person);
-                const deleteBtn = document.createElement('button');
-                deleteBtn.textContent = '刪除';
-                deleteBtn.onclick = () => deletePerson(index);
-                list.appendChild(button);
-                list.appendChild(deleteBtn);
-            });
-            localStorage.setItem('persons', JSON.stringify(persons));
-        }
-
-        function addPerson() {
-            const name = prompt('輸入新成員名稱');
-            if (name && !persons.includes(name)) {
-                persons.push(name);
-                updatePersonList();
-            }
-        }
-
-        function deletePerson(index) {
-            persons.splice(index, 1);
-            updatePersonList();
-        }
-    </script>
+        html+='</tr>';
+      }
+      cal.innerHTML=html;
+    }
+    ySel.onchange=draw; mSel.onchange=draw;
+    draw();
+  </script>
 </body>
 </html>

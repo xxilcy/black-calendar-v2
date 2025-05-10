@@ -3,96 +3,55 @@
 <head>
   <meta charset="UTF-8">
   <title>黑曆 Step1</title>
- body {
-  background-color: #111;
-  color: #eee;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
-  margin: 0;
-}
-
-h1 {
-  color: #0ff;
-  margin: 10px 0 20px;
-  font-size: 24px;
-  font-weight: normal;
-}
-
-.controls {
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.controls label {
-  font-size: 16px;
-}
-
-.controls select {
-  padding: 5px 8px;
-  font-size: 16px;
-  background-color: #222;
-  color: #0ff;
-  border: 1px solid #0ff;
-  border-radius: 4px;
-  min-width: 60px;
-}
-
-.controls button {
-  padding: 6px 12px;
-  font-size: 16px;
-  background-color: #222;
-  color: #0ff;
-  border: 1px solid #0ff;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.controls button.selected {
-  background-color: #0ff;
-  color: #111;
-}
-
-.calendar {
-  width: 100%;
-  max-width: 900px;
-}
-
-table {
-  border-collapse: collapse;
-  width: 100%;
-}
-
-th, td {
-  border: 1px solid #333;
-  width: 60px;
-  height: 60px;
-  text-align: center;
-  vertical-align: middle;
-  font-size: 16px;
-}
-
-th {
-  background-color: #222;
-  color: #0ff;
-  font-weight: normal;
-}
-
+  <style>
+    body {
+      background: #111;
+      color: #eee;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+    }
+    .controls {
+      margin: 20px 0;
+    }
+    select {
+      padding: 5px;
+      background: #222;
+      color: #0ff;
+      border: 1px solid #0ff;
+      border-radius: 4px;
+      font-size: 16px;
+      margin: 0 5px;
+    }
+    table {
+      margin: 0 auto;
+      border-collapse: collapse;
+    }
+    th, td {
+      width: 40px;
+      height: 40px;
+      border: 1px solid #333;
+      font-size: 14px;
+      line-height: 40px;
+    }
+    th {
+      background: #222;
+      color: #0ff;
+    }
+  </style>
 </head>
 <body>
+  <h1>黑曆 Step1</h1>
   <div class="controls">
-    <label>年<select id="y"></select></label>
-    <label>月<select id="m"></select></label>
-    <button id="todoBtn">代辦事項</button>
-    <button id="scheduleBtn">排班模式</button>
+    年<select id="y"></select>
+    月<select id="m"></select>
   </div>
   <table>
     <thead>
-      <tr><th>日</th><th>一</th><th>二</th><th>三</th><th>四</th><th>五</th><th>六</th></tr>
+      <tr>
+        <th>日</th><th>一</th><th>二</th><th>三</th><th>四</th><th>五</th><th>六</th>
+      </tr>
     </thead>
     <tbody id="cal"></tbody>
   </table>
@@ -100,47 +59,43 @@ th {
     const ySel = document.getElementById('y'),
           mSel = document.getElementById('m'),
           cal  = document.getElementById('cal');
-    // 年/月下拉初始化
-    for(let Y=2023; Y<=2030; Y++){ ySel.add(new Option(Y,Y)); }
-    for(let M=1; M<=12; M++){ mSel.add(new Option(M,M)); }
-    ySel.value = new Date().getFullYear();
-    mSel.value = new Date().getMonth()+1;
-    // 畫日曆
+    // 1. 年／月下拉初始化
+    for(let Y=2023; Y<=2030; Y++){
+      ySel.add(new Option(Y, Y));
+    }
+    for(let M=1; M<=12; M++){
+      mSel.add(new Option(M, M));
+    }
+    // 預設今年、本月
+    const today = new Date();
+    ySel.value = today.getFullYear();
+    mSel.value = today.getMonth() + 1;
+
+    // 2. 畫日曆
     function draw(){
-      const Y = +ySel.value, M = +mSel.value;
-      const first = new Date(Y,M-1,1).getDay(),
-            days  = new Date(Y,M,0).getDate();
-      let html='', d=1;
-      for(let w=0; w<6; w++){
+      const Y = +ySel.value,
+            M = +mSel.value;
+      const first = new Date(Y, M-1, 1).getDay(),
+            days  = new Date(Y, M, 0).getDate();
+      let html = '', d = 1;
+      for(let w = 0; w < 6; w++){
         html += '<tr>';
-        for(let wd=0; wd<7; wd++){
-          if((w===0 && wd<first) || d>days){
+        for(let wd = 0; wd < 7; wd++){
+          if((w === 0 && wd < first) || d > days){
             html += '<td></td>';
           } else {
-            html += '<td>'+d+'</td>'; d++;
+            html += '<td>' + d + '</td>';
+            d++;
           }
         }
         html += '</tr>';
       }
       cal.innerHTML = html;
     }
-    ySel.onchange = mSel.onchange = draw;
+
+    ySel.onchange = draw;
+    mSel.onchange = draw;
     draw();
-    // 一開始預設代辦事項模式
-document.getElementById('todoBtn').classList.add('selected');
-
-document.getElementById('todoBtn').addEventListener('click', () => {
-  document.getElementById('todoBtn').classList.add('selected');
-  document.getElementById('scheduleBtn').classList.remove('selected');
-  // TODO: 未來在這裡切成 todo 模式
-});
-
-document.getElementById('scheduleBtn').addEventListener('click', () => {
-  document.getElementById('scheduleBtn').classList.add('selected');
-  document.getElementById('todoBtn').classList.remove('selected');
-  // TODO: 未來在這裡切成 schedule 模式
-});
-
   </script>
 </body>
 </html>

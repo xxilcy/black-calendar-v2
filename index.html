@@ -7,6 +7,10 @@
     body { background:#111; color:#eee; font-family:sans-serif; text-align:center; }
     .controls { margin:20px; }
     select { padding:5px; background:#222; color:#0ff; border:1px solid #0ff; }
+    .selected {
+  background-color: #0ff !important;
+  color: #111 !important;
+}
     table { margin:0 auto; border-collapse:collapse; }
     th,td { width:40px; height:40px; border:1px solid #333; }
     th { background:#222; color:#0ff; }
@@ -16,6 +20,8 @@
   <div class="controls">
     <label>年<select id="y"></select></label>
     <label>月<select id="m"></select></label>
+    <button id="todoBtn">代辦事項</button>
+    <button id="scheduleBtn">排班模式</button>
   </div>
   <table>
     <thead>
@@ -53,6 +59,21 @@
     }
     ySel.onchange = mSel.onchange = draw;
     draw();
+    // 一開始預設代辦事項模式
+document.getElementById('todoBtn').classList.add('selected');
+
+document.getElementById('todoBtn').addEventListener('click', () => {
+  document.getElementById('todoBtn').classList.add('selected');
+  document.getElementById('scheduleBtn').classList.remove('selected');
+  // TODO: 未來在這裡切成 todo 模式
+});
+
+document.getElementById('scheduleBtn').addEventListener('click', () => {
+  document.getElementById('scheduleBtn').classList.add('selected');
+  document.getElementById('todoBtn').classList.remove('selected');
+  // TODO: 未來在這裡切成 schedule 模式
+});
+
   </script>
 </body>
 </html>

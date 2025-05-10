@@ -3,18 +3,85 @@
 <head>
   <meta charset="UTF-8">
   <title>黑曆 Step1</title>
-  <style>
-    body { background:#111; color:#eee; font-family:sans-serif; text-align:center; }
-    .controls { margin:20px; }
-    select { padding:5px; background:#222; color:#0ff; border:1px solid #0ff; }
-    .selected {
-  background-color: #0ff !important;
-  color: #111 !important;
+ body {
+  background-color: #111;
+  color: #eee;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  margin: 0;
 }
-    table { margin:0 auto; border-collapse:collapse; }
-    th,td { width:40px; height:40px; border:1px solid #333; }
-    th { background:#222; color:#0ff; }
-  </style>
+
+h1 {
+  color: #0ff;
+  margin: 10px 0 20px;
+  font-size: 24px;
+  font-weight: normal;
+}
+
+.controls {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.controls label {
+  font-size: 16px;
+}
+
+.controls select {
+  padding: 5px 8px;
+  font-size: 16px;
+  background-color: #222;
+  color: #0ff;
+  border: 1px solid #0ff;
+  border-radius: 4px;
+  min-width: 60px;
+}
+
+.controls button {
+  padding: 6px 12px;
+  font-size: 16px;
+  background-color: #222;
+  color: #0ff;
+  border: 1px solid #0ff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.controls button.selected {
+  background-color: #0ff;
+  color: #111;
+}
+
+.calendar {
+  width: 100%;
+  max-width: 900px;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th, td {
+  border: 1px solid #333;
+  width: 60px;
+  height: 60px;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 16px;
+}
+
+th {
+  background-color: #222;
+  color: #0ff;
+  font-weight: normal;
+}
+
 </head>
 <body>
   <div class="controls">

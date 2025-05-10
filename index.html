@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
-  <title>黑曆 Step1</title>
+  <title>黑曆 Step2</title>
   <style>
     body {
       background: #111;
@@ -12,8 +12,13 @@
       margin: 0;
       padding: 20px;
     }
+    h1 {
+      margin-bottom: 20px;
+      font-size: 24px;
+      color: #0ff;
+    }
     .controls {
-      margin: 20px 0;
+      margin-bottom: 20px;
     }
     select {
       padding: 5px;
@@ -23,6 +28,22 @@
       border-radius: 4px;
       font-size: 16px;
       margin: 0 5px;
+    }
+    /* 新增 Step2 的按鈕樣式 */
+    button {
+      padding: 6px 12px;
+      margin: 0 5px;
+      font-size: 16px;
+      background: #222;
+      color: #0ff;
+      border: 1px solid #0ff;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    /* 切換後的選中樣式 */
+    button.selected {
+      background-color: #0ff !important;
+      color: #111 !important;
     }
     table {
       margin: 0 auto;
@@ -42,39 +63,47 @@
   </style>
 </head>
 <body>
-  <h1>黑曆 Step1</h1>
+  <h1>黑曆 Step2</h1>
+
   <div class="controls">
     年<select id="y"></select>
     月<select id="m"></select>
+    <!-- 加回兩顆按鈕 -->
+    <button id="todoBtn">代辦事項</button>
+    <button id="scheduleBtn">排班模式</button>
   </div>
+
   <table>
     <thead>
       <tr>
-        <th>日</th><th>一</th><th>二</th><th>三</th><th>四</th><th>五</th><th>六</th>
+        <th>日</th><th>一</th><th>二</th><th>三</th>
+        <th>四</th><th>五</th><th>六</th>
       </tr>
     </thead>
     <tbody id="cal"></tbody>
   </table>
+
   <script>
     const ySel = document.getElementById('y'),
           mSel = document.getElementById('m'),
-          cal  = document.getElementById('cal');
-    // 1. 年／月下拉初始化
+          cal  = document.getElementById('cal'),
+          todoBtn     = document.getElementById('todoBtn'),
+          scheduleBtn = document.getElementById('scheduleBtn');
+
+    // 1. 初始化年／月下拉
     for(let Y=2023; Y<=2030; Y++){
       ySel.add(new Option(Y, Y));
     }
     for(let M=1; M<=12; M++){
       mSel.add(new Option(M, M));
     }
-    // 預設今年、本月
     const today = new Date();
     ySel.value = today.getFullYear();
     mSel.value = today.getMonth() + 1;
 
-    // 2. 畫日曆
+    // 2. 畫日曆函式（同 Step1）
     function draw(){
-      const Y = +ySel.value,
-            M = +mSel.value;
+      const Y = +ySel.value, M = +mSel.value;
       const first = new Date(Y, M-1, 1).getDay(),
             days  = new Date(Y, M, 0).getDate();
       let html = '', d = 1;
@@ -92,10 +121,24 @@
       }
       cal.innerHTML = html;
     }
-
     ySel.onchange = draw;
     mSel.onchange = draw;
     draw();
+
+    // 3. 按鈕切換變色邏輯
+    // 預設「代辦事項」被選中
+    todoBtn.classList.add('selected');
+
+    todoBtn.addEventListener('click', () => {
+      todoBtn.classList.add('selected');
+      scheduleBtn.classList.remove('selected');
+      // TODO: 將來把代辦事項邏輯掛在這裡
+    });
+    scheduleBtn.addEventListener('click', () => {
+      scheduleBtn.classList.add('selected');
+      todoBtn.classList.remove('selected');
+      // TODO: 將來把排班邏輯掛在這裡
+    });
   </script>
 </body>
 </html>

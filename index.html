@@ -2,87 +2,33 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
-  <title>黑曆 Step2</title>
+  <title>黑曆 Step3</title>
   <style>
-    body {
-      background: #111;
-      color: #eee;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      text-align: center;
-      margin: 0;
-      padding: 20px;
-    }
-    h1 {
-      margin-bottom: 20px;
-      font-size: 24px;
-      color: #0ff;
-    }
-    .controls {
-      margin-bottom: 20px;
-    }
-    select {
-      padding: 5px;
-      background: #222;
-      color: #0ff;
-      border: 1px solid #0ff;
-      border-radius: 4px;
-      font-size: 16px;
-      margin: 0 5px;
-    }
-    /* 新增 Step2 的按鈕樣式 */
-    button {
-      padding: 6px 12px;
-      margin: 0 5px;
-      font-size: 16px;
-      background: #222;
-      color: #0ff;
-      border: 1px solid #0ff;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    /* 切換後的選中樣式 */
-    button.selected {
-      background-color: #0ff !important;
-      color: #111 !important;
-    }
-    table {
-      margin: 0 auto;
-      border-collapse: collapse;
-    }
-    th, td {
-      width: 40px;
-      height: 40px;
-      border: 1px solid #333;
-      font-size: 14px;
-      line-height: 40px;
-    }
-    th {
-      background: #222;
-      color: #0ff;
-    }
+    body { background: #111; color: #eee; font-family: 'Segoe UI', sans-serif; text-align: center; margin: 0; padding: 20px; }
+    h1 { margin-bottom: 20px; font-size: 24px; color: #0ff; }
+    .controls { margin-bottom: 20px; }
+    select { padding: 5px; background: #222; color: #0ff; border: 1px solid #0ff; border-radius: 4px; font-size: 16px; margin: 0 5px; }
+    button { padding: 6px 12px; margin: 0 5px; font-size: 16px; background: #222; color: #0ff; border: 1px solid #0ff; border-radius: 4px; cursor: pointer; }
+    button.selected { background-color: #0ff !important; color: #111 !important; }
+    table { margin: 0 auto; border-collapse: collapse; }
+    th, td { width: 40px; height: 40px; border: 1px solid #333; font-size: 14px; line-height: 14px; white-space: pre-wrap; vertical-align: top; padding: 2px; }
+    th { background: #222; color: #0ff; font-weight: normal; }
   </style>
 </head>
 <body>
-  <h1>黑曆 Step2</h1>
-
+  <h1>黑曆 Step3</h1>
   <div class="controls">
     年<select id="y"></select>
     月<select id="m"></select>
-    <!-- 加回兩顆按鈕 -->
     <button id="todoBtn">代辦事項</button>
     <button id="scheduleBtn">排班模式</button>
   </div>
-
   <table>
     <thead>
-      <tr>
-        <th>日</th><th>一</th><th>二</th><th>三</th>
-        <th>四</th><th>五</th><th>六</th>
-      </tr>
+      <tr><th>日</th><th>一</th><th>二</th><th>三</th><th>四</th><th>五</th><th>六</th></tr>
     </thead>
     <tbody id="cal"></tbody>
   </table>
-
   <script>
     const ySel = document.getElementById('y'),
           mSel = document.getElementById('m'),
@@ -90,27 +36,23 @@
           todoBtn     = document.getElementById('todoBtn'),
           scheduleBtn = document.getElementById('scheduleBtn');
 
-    // 1. 初始化年／月下拉
-    for(let Y=2023; Y<=2030; Y++){
-      ySel.add(new Option(Y, Y));
-    }
-    for(let M=1; M<=12; M++){
-      mSel.add(new Option(M, M));
-    }
+    // 1. 年／月下拉初始化
+    for(let Y=2023; Y<=2030; Y++) ySel.add(new Option(Y, Y));
+    for(let M=1; M<=12; M++)   mSel.add(new Option(M, M));
     const today = new Date();
     ySel.value = today.getFullYear();
     mSel.value = today.getMonth() + 1;
 
-    // 2. 畫日曆函式（同 Step1）
+    // 2. 畫日曆
     function draw(){
       const Y = +ySel.value, M = +mSel.value;
       const first = new Date(Y, M-1, 1).getDay(),
             days  = new Date(Y, M, 0).getDate();
       let html = '', d = 1;
-      for(let w = 0; w < 6; w++){
+      for(let w=0; w<6; w++){
         html += '<tr>';
-        for(let wd = 0; wd < 7; wd++){
-          if((w === 0 && wd < first) || d > days){
+        for(let wd=0; wd<7; wd++){
+          if((w===0 && wd<first) || d>days){
             html += '<td></td>';
           } else {
             html += '<td>' + d + '</td>';
@@ -125,19 +67,28 @@
     mSel.onchange = draw;
     draw();
 
-    // 3. 按鈕切換變色邏輯
-    // 預設「代辦事項」被選中
+    // 3. 模式切換顏色
     todoBtn.classList.add('selected');
-
     todoBtn.addEventListener('click', () => {
       todoBtn.classList.add('selected');
       scheduleBtn.classList.remove('selected');
-      // TODO: 將來把代辦事項邏輯掛在這裡
     });
     scheduleBtn.addEventListener('click', () => {
       scheduleBtn.classList.add('selected');
       todoBtn.classList.remove('selected');
-      // TODO: 將來把排班邏輯掛在這裡
+    });
+
+    // 4. 點格子輸入
+    cal.addEventListener('click', e => {
+      const td = e.target;
+      if(td.tagName==='TD' && td.textContent.trim() && td.textContent.trim().match(/^\d+$/)){
+        const day  = td.textContent.trim(),
+              type = todoBtn.classList.contains('selected') ? '代辦' : '排班',
+              text = prompt(`${type}：請輸入 ${ySel.value}/${mSel.value}/${day} 的內容`);
+        if(text!==null){
+          td.textContent = day + '\n' + text;
+        }
+      }
     });
   </script>
 </body>
